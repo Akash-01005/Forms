@@ -59,4 +59,27 @@ routes.post("/reset-password/:token", async (req, res) => {
     }
 });
 
+const verifyUser = async(req,res,next)=>{
+    try {
+        const token = req.cookies.token;
+        if(!token){
+            return res.json({status:false,message:"no token"})
+        }
+        const decoded = await jwt.verify(token,"qwiueiouriuewiouriouqweiourioueiwuiuioeuioruiouriueiouri")
+        next();
+    } catch (error) {
+        return res.json(error)
+    }
+ 
+ } 
+
+routes.get("/verify",verifyUser,(req,res)=>{
+    return res.json({status:true,message:"authorized"})
+})
+
+routes.get("/logout",(req,res)=>{
+    res.clearCookie('token')
+    return res.json({status:true})
+})
+
 export {routes as ResetRouter}
